@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gwei 積累者：區塊鏈點擊遊戲</title>
+    <style>
+        /* 基礎樣式 */
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background-color: #1e1e1e;
+            color: #00ff6a; /* 綠色，營造科技感 */
+            margin: 0;
+            text-align: center;
+        }
+        #game-container {
+            border: 2px solid #00ff6a;
+            padding: 30px;
+            border-radius: 10px;
+            background-color: #0d0d0d;
+            box-shadow: 0 0 20px rgba(0, 255, 106, 0.5);
+        }
+        .stats p {
+            font-size: 1.2em;
+            margin: 5px 0;
+        }
+        /* 點擊按鈕樣式 */
+        #click-button {
+            padding: 20px 40px;
+            font-size: 24px;
+            cursor: pointer;
+            background-color: #00ff6a;
+            color: #1e1e1e;
+            border: none;
+            border-radius: 5px;
+            margin-top: 20px;
+            transition: background-color 0.1s;
+        }
+        #click-button:hover {
+            background-color: #00e05b;
+        }
+        /* 升級按鈕樣式 */
+        #upgrade-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.1s;
+        }
+        #upgrade-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <h1>Gwei 積累者</h1>
+        
+        <div class="stats">
+            <p>總 $Gwei$: <span id="gwei-display">0</span></p>
+            <p>每次點擊產出 ($GPC$): <span id="gpc-display">1</span></p>
+        </div>
+        
+        <button id="click-button" onclick="clickGwei()">
+            點擊挖礦 (區塊)
+        </button>
+
+        <button id="upgrade-button" onclick="upgradeClick()">
+            升級 GPU (成本: <span id="upgrade-cost-display">10</span> $Gwei$)
+        </button>
+    </div>
+
+    <script>
+        // 遊戲變數
+        let gwei = 0;
+        let gpc = 1; // Gwei Per Click
+        let upgradeCost = 10;
+        
+        // DOM 元素獲取
+        const gweiDisplay = document.getElementById('gwei-display');
+        const gpcDisplay = document.getElementById('gpc-display');
+        const upgradeCostDisplay = document.getElementById('upgrade-cost-display');
+
+        // 函數：更新遊戲數據顯示
+        function updateDisplay() {
+            gweiDisplay.textContent = Math.floor(gwei);
+            gpcDisplay.textContent = gpc;
+            upgradeCostDisplay.textContent = upgradeCost;
+        }
+
+        // 函數：核心點擊功能
+        function clickGwei() {
+            gwei += gpc;
+            updateDisplay();
+        }
+
+        // 函數：升級功能 (GPU 升級)
+        function upgradeClick() {
+            if (gwei >= upgradeCost) {
+                gwei -= upgradeCost;
+                gpc += 1; // 每次升級 GPC + 1
+                upgradeCost = Math.floor(upgradeCost * 1.5); // 成本增加 50%
+                updateDisplay();
+            } else {
+                alert('Gwei 不足！需要 ' + upgradeCost + ' Gwei 才能升級。');
+            }
+        }
+
+        // 遊戲初始化
+        updateDisplay();
+    </script>
+</body>
+</html>
