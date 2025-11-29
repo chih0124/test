@@ -67,6 +67,19 @@
         <div class="stats">
             <p>總 $Gwei$: <span id="gwei-display">0</span></p>
             <p>每次點擊產出 ($GPC$): <span id="gpc-display">1</span></p>
+            <div class="stats">
+    <p>總 $Gwei$: <span id="gwei-display">0</span></p>
+    <p>每次點擊產出 ($GPC$): <span id="gpc-display">1</span></p>
+    <p>每秒自動產出 ($GPS$): <span id="gps-display">0</span></p>
+</div>
+
+<button id="upgrade-button" onclick="upgradeClick()">
+    升級 $GPC$ (成本: <span id="upgrade-cost-display">10</span> $Gwei$)
+</button>
+
+<button id="gps-upgrade-button" onclick="upgradeGPS()">
+    升級礦機 ($GPS$ 成本: <span id="gps-upgrade-cost-display">50</span> $Gwei$)
+</button>
         </div>
         
         <button id="click-button" onclick="clickGwei()">
@@ -79,87 +92,112 @@
     </div>
 
     <script>
-        // 遊戲變數
-        let gwei = 0;
-        let gpc = 1; // Gwei Per Click
-        let upgradeCost = 10;
-        
-        // DOM 元素獲取
-        const gweiDisplay = document.getElementById('gwei-display');
-        const gpcDisplay = document.getElementById('gpc-display');
-        const upgradeCostDisplay = document.getElementById('upgrade-cost-display');
+        <script>
+    // 遊戲變數
+    let gwei = 0;
+    let gpc = 1;      // Gwei Per Click
+    let gps = 0;      // 【新增】Gwei Per Second
+    let gpcUpgradeCost = 10;
+    let gpsUpgradeCost = 50; // 【新增】GPS 升級成本
+    
+    // DOM 元素
+    const gweiDisplay = document.getElementById('gwei-display');
+    const gpcDisplay = document.getElementById('gpc-display');
+    const gpsDisplay = document.getElementById('gps-display'); // 【新增】
+    const gpcUpgradeCostDisplay = document.getElementById('upgrade-cost-display');
+    const gpsUpgradeCostDisplay = document.getElementById('gps-upgrade-cost-display'); // 【新增】
 
-        // 函數：更新遊戲數據顯示
-        function updateDisplay() {
-            gweiDisplay.textContent = Math.floor(gwei);
-            gpcDisplay.textContent = gpc;
-            upgradeCostDisplay.textContent = upgradeCost;
+    // 更新顯示
+    function updateDisplay() {
+        // 使用 toFixed(2) 讓 Gwei 顯示小數點，避免自動產出導致數字跳動不美觀
+        gweiDisplay.textContent = gwei.toFixed(2);
+        gpcDisplay.textContent = gpc;
+        gpsDisplay.textContent = gps; // 【新增】
+        gpcUpgradeCostDisplay.textContent = gpcUpgradeCost;
+        gpsUpgradeCostDisplay.textContent = gpsUpgradeCost; // 【新增】
+    }
+
+    // 核心點擊功能
+    function clickGwei() {
+        gwei += gpc;
+        updateDisplay();
+    }
+
+    // GPC 升級功能
+    function upgradeClick() {
+        if (gwei >= gpcUpgradeCost) {
+            gwei -= gpcUpgradeCost;
+            gpc += 1;
+            gpcUpgradeCost = Math.floor(gpcUpgradeCost * 1.5);
+            updateDisplay();
+        } else {
+            alert('Gwei 不足！');
         }
+    }
+    
+    // 【新增】GPS 升級功能
+    function upgradeGPS() {
+        if (gwei >= gpsUpgradeCost) {
+            gwei -= gpsUpgradeCost;
+            gps += 5; // 每次升級 GPS 增加 5
+            gpsUpgradeCost = Math.floor(gpsUpgradeCost * 2); // GPS 升級成本翻倍，較昂貴
+            updateDisplay();
+        } else {
+            alert('Gwei 不足！');
+        }
+    }
 
-        // 函數：核心點擊功能
-        function clickGwei() {
-            gwei += gpc;
+    // 【新增】定時自動產出功能
+    function autoMine() {
+        gwei += gps / 10; // 每 100 毫秒 (1/10 秒) 增加 1/10 的 GPS 總量
+        updateDisplay();
+    }
+    
+    // 函數：儲存遊戲進度 (已更新以包含 GPS 變數)
+    function saveGame() {
+        const gameData = {
+            gwei: gwei,
+            gpc: gpc,
+            gps: gps, // 【更新】
+            gpcUpgradeCost: gpcUpgradeCost,
+            gpsUpgradeCost: gpsUpgradeCost // 【更新】
+        };
+        localStorage.setItem('gweiClickerSave', JSON.stringify(gameData));
+    }
+
+    // 函數：載入遊戲進度 (已更新以包含 GPS 變數)
+    function loadGame() {
+        const savedData = localStorage.getItem('gweiClickerSave');
+        if (savedData) {
+            const gameData = JSON.parse(savedData);
+            gwei = gameData.gwei || 0;
+            gpc = gameData.gpc || 1;
+            gps = gameData.gps || 0; // 【更新】
+            gpcUpgradeCost = gameData.gpcUpgradeCost || 10;
+            gpsUpgradeCost = gameData.gpsUpgradeCost || 50; // 【更新】
             updateDisplay();
         }
+    }
 
-        // 函數：升級功能 (GPU 升級)
-        function upgradeClick() {
-            if (gwei >= upgradeCost) {
-                gwei -= upgradeCost;
-                gpc += 1; // 每次升級 GPC + 1
-                upgradeCost = Math.floor(upgradeCost * 1.5); // 成本增加 50%
-                updateDisplay();
-            } else {
-                alert('Gwei 不足！需要 ' + upgradeCost + ' Gwei 才能升級。');
-            }
-        }
+    // --- 啟動機制 ---
+    
+    // 1. 在遊戲開始時立即載入進度
+    loadGame(); 
+    
+    // 2. 設置定時自動產出 (每 100 毫秒執行一次，確保流暢)
+    setInterval(autoMine, 100); 
 
-        // 遊戲初始化
-        updateDisplay();
-        // ... (之前已有的程式碼，例如 upgradeClick 函數)
+    // 3. 設置定時自動存檔（每 10 秒存檔一次）
+    setInterval(saveGame, 10000); 
+    
+    // 初始化顯示（確保在 loadGame 後執行）
+    updateDisplay();
 
-        // 存檔與讀檔機制
-        
-        // 函數：儲存遊戲進度
-        function saveGame() {
-            const gameData = {
-                gwei: gwei,
-                gpc: gpc,
-                upgradeCost: upgradeCost
-            };
-            // 將 JavaScript 物件轉換成 JSON 字串並存入 localStorage
-            localStorage.setItem('gweiClickerSave', JSON.stringify(gameData));
-            console.log("遊戲已自動存檔"); // 在主控台顯示存檔成功
-        }
-
-        // 函數：載入遊戲進度
-        function loadGame() {
-            const savedData = localStorage.getItem('gweiClickerSave');
-            if (savedData) {
-                // 將 JSON 字串解析回 JavaScript 物件
-                const gameData = JSON.parse(savedData);
-                gwei = gameData.gwei || 0;
-                gpc = gameData.gpc || 1;
-                upgradeCost = gameData.upgradeCost || 10;
-                updateDisplay();
-                console.log("遊戲紀錄已載入");
-            }
-        }
-
-        // --- 啟動機制 ---
-        
-        // 1. 在遊戲開始時立即載入進度
-        loadGame(); 
-        
-        // 2. 設置定時自動存檔（每 10 秒存檔一次）
-        // setInterval(函數, 間隔時間毫秒)
-        setInterval(saveGame, 10000); 
-        
-        // 初始化顯示（確保在 loadGame 後執行）
-        updateDisplay();
+</script>
     </script>
     
 </body>
 
 </html>
+
 
