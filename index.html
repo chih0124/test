@@ -117,5 +117,47 @@
         // 遊戲初始化
         updateDisplay();
     </script>
+    // ... (之前已有的程式碼，例如 upgradeClick 函數)
+
+        // 存檔與讀檔機制
+        
+        // 函數：儲存遊戲進度
+        function saveGame() {
+            const gameData = {
+                gwei: gwei,
+                gpc: gpc,
+                upgradeCost: upgradeCost
+            };
+            // 將 JavaScript 物件轉換成 JSON 字串並存入 localStorage
+            localStorage.setItem('gweiClickerSave', JSON.stringify(gameData));
+            console.log("遊戲已自動存檔"); // 在主控台顯示存檔成功
+        }
+
+        // 函數：載入遊戲進度
+        function loadGame() {
+            const savedData = localStorage.getItem('gweiClickerSave');
+            if (savedData) {
+                // 將 JSON 字串解析回 JavaScript 物件
+                const gameData = JSON.parse(savedData);
+                gwei = gameData.gwei || 0;
+                gpc = gameData.gpc || 1;
+                upgradeCost = gameData.upgradeCost || 10;
+                updateDisplay();
+                console.log("遊戲紀錄已載入");
+            }
+        }
+
+        // --- 啟動機制 ---
+        
+        // 1. 在遊戲開始時立即載入進度
+        loadGame(); 
+        
+        // 2. 設置定時自動存檔（每 10 秒存檔一次）
+        // setInterval(函數, 間隔時間毫秒)
+        setInterval(saveGame, 10000); 
+        
+        // 初始化顯示（確保在 loadGame 後執行）
+        updateDisplay();
 </body>
+
 </html>
