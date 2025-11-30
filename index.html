@@ -89,14 +89,17 @@
             box-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
             transform: scale(1.0);
         }
+        
 
-        /* 升級按鈕容器 (保持並排) */
-        #upgrade-buttons-container {
-            display: flex;
-            gap: 15px; 
-            margin-top: 35px;
-            justify-content: center; 
-        }
+
+        /* 升級按鈕容器 (將對齊方式改為左側) */
+    #upgrade-buttons-container {
+    display: flex;
+    gap: 15px; 
+    margin-top: 35px;
+    /* 【關鍵修改】將內容對齊到容器的起始位置（左側） */
+    justify-content: flex-start; 
+    }
 
         /* 通用升級按鈕基底樣式 */
         .upgrade-btn {
@@ -259,3 +262,4 @@
     </script>
 </body>
 </html>
+
