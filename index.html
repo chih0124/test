@@ -3,108 +3,164 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gwei 積累者：區塊鏈點擊遊戲</title>
+    <title>Gwei Accumulator: Blockchain Clicker</title>
     <style>
-        /* 基礎樣式 */
+        /* 基礎樣式與霓虹背景 */
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Consolas', 'Courier New', monospace; /* 科技感字體 */
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            background-color: #1e1e1e;
-            color: #00ff6a; /* 綠色，營造科技感 */
             margin: 0;
             text-align: center;
-        }
-        #game-container {
-            border: 2px solid #00ff6a;
-            padding: 30px;
-            border-radius: 10px;
-            background-color: #0d0d0d;
-            box-shadow: 0 0 20px rgba(0, 255, 106, 0.5);
-        }
-        .stats p {
-            font-size: 1.2em;
-            margin: 5px 0;
-        }
-        
-        /* 點擊按鈕樣式 */
-        #click-button {
-            padding: 20px 40px;
-            font-size: 24px;
-            cursor: pointer;
-            background-color: #00ff6a;
-            color: #1e1e1e;
-            border: none;
-            border-radius: 5px;
-            margin-top: 20px;
-            transition: background-color 0.1s;
-        }
-        #click-button:hover {
-            background-color: #00e05b;
+            overflow: hidden; /* 防止背景圖滾動 */
+            background-color: #000; /* 預設黑色背景 */
         }
 
-        /* 【修正/新增】升級按鈕容器樣式，實現並排 */
+        /* 【新增】全屏背景圖層 */
+        #full-background {
+            position: fixed; /* 固定位置 */
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('images/cyberpunk_bg.jpg'); /* 替換為您的圖片路徑 */
+            background-size: cover; /* 覆蓋整個區域 */
+            background-position: center; /* 圖片居中 */
+            background-repeat: no-repeat; /* 不重複 */
+            opacity: 0.8; /* 稍微降低透明度，讓前景元素更突出 */
+            z-index: -1; /* 確保在所有內容之後 */
+            filter: blur(2px) brightness(0.7); /* 輕微模糊和變暗，讓前景文字更易讀 */
+        }
+
+        #game-container {
+            /* 移除邊框和陰影，讓它更融入背景圖 */
+            padding: 40px; 
+            border-radius: 12px;
+            background-color: rgba(26, 26, 26, 0.7); /* 半透明的深色背景，讓背景圖透出 */
+            position: relative; /* 確保內容在背景圖之上 */
+            z-index: 1; /* 讓內容顯示在背景之上 */
+            min-width: 400px; /* 確保容器有一定寬度 */
+            backdrop-filter: blur(5px); /* 對容器後面的背景做模糊處理，增加層次感 (現代瀏覽器支持) */
+            border: 1px solid rgba(0, 255, 106, 0.3); /* 細微的邊框 */
+        }
+        
+        h1 {
+            text-shadow: 0 0 10px #00ff6a; /* 標題霓虹效果更強 */
+            margin-bottom: 25px;
+            color: #00ff6a; /* 標題顏色 */
+            font-size: 2.5em; /* 調整標題大小 */
+            letter-spacing: 2px; /* 字體間距 */
+        }
+
+        .stats p {
+            font-size: 1.4em; /* 調整文字大小 */
+            margin: 10px 0;
+            color: #00ff6a; /* 保持綠色 */
+        }
+        .stats span {
+            text-shadow: 0 0 8px rgba(0, 255, 106, 0.7); /* 數字光暈 */
+        }
+        
+        /* 核心點擊按鈕 - 參考圖片中心樣式 */
+        #click-button {
+            padding: 25px 50px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            background-color: rgba(60, 0, 100, 0.7); /* 深紫半透明 */
+            color: #e0e0e0; /* 亮色文字 */
+            border: 3px solid #ff00ff; /* 紫色邊框 */
+            border-radius: 8px;
+            margin-top: 40px; /* 增加間距 */
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.7); /* 強烈紫紅色光暈 */
+            transition: all 0.2s ease-in-out;
+            text-shadow: 0 0 8px #ff00ff;
+        }
+        #click-button:hover {
+            background-color: rgba(80, 0, 120, 0.8);
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(255, 0, 255, 1);
+        }
+        #click-button:active {
+            background-color: rgba(40, 0, 80, 0.9);
+            box-shadow: 0 0 10px rgba(255, 0, 255, 0.5);
+            transform: scale(1.0);
+        }
+
+        /* 升級按鈕容器 (保持並排) */
         #upgrade-buttons-container {
             display: flex;
-            gap: 20px;
-            margin-top: 25px;
-            /* 讓按鈕居中，因為容器寬度可能不滿 */
+            gap: 15px; 
+            margin-top: 35px;
             justify-content: center; 
         }
 
-        /* GPC 升級按鈕 (藍色) */
-        #upgrade-button {
-            padding: 10px 20px;
-            background-color: #007bff; 
-            color: white;
+        /* 通用升級按鈕基底樣式 */
+        .upgrade-btn {
+            padding: 12px 25px;
+            font-size: 16px;
+            font-weight: 500;
             border: none;
-            border-radius: 5px;
+            border-radius: 6px;
             cursor: pointer;
-            transition: background-color 0.1s;
+            color: white;
+            transition: background-color 0.2s, transform 0.1s, box-shadow 0.2s;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.5);
+        }
+
+        /* GPC 升級按鈕 (科技藍) */
+        #upgrade-button {
+            background-color: rgba(0, 123, 255, 0.6); /* 半透明藍 */
+            box-shadow: 0 0 15px rgba(0, 123, 255, 0.7);
+            border: 1px solid rgba(0, 123, 255, 0.9);
         }
         #upgrade-button:hover {
-            background-color: #0056b3;
+            background-color: rgba(0, 100, 200, 0.8);
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px rgba(0, 123, 255, 1);
         }
         
-        /* 【新增】GPS 升級按鈕樣式 (橙色) */
+        /* GPS 升級按鈕 (警告黃/橙) */
         #gps-upgrade-button {
-            padding: 10px 20px;
-            background-color: #ff6a00; /* 橙色，與 GPC 區分 */
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.1s;
+            background-color: rgba(255, 193, 7, 0.6); /* 半透明黃 */
+            color: #1a1a1a; 
+            box-shadow: 0 0 15px rgba(255, 193, 7, 0.7);
+            border: 1px solid rgba(255, 193, 7, 0.9);
         }
         #gps-upgrade-button:hover {
-            background-color: #cc5400;
+            background-color: rgba(220, 170, 0, 0.8);
+            transform: translateY(-2px);
+            box-shadow: 0 0 25px rgba(255, 193, 7, 1);
         }
+
     </style>
 </head>
 <body>
+    <div id="full-background"></div>
+
     <div id="game-container">
-        <h1>Gwei 積累者</h1>
+        <h1>$GWEI$ <span style="font-size: 0.6em;">ACCUMULATOR</span></h1>
         
         <div class="stats">
-            <p>總 $Gwei$: <span id="gwei-display">0</span></p>
-            <p>每次點擊產出 ($GPC$): <span id="gpc-display">1</span></p>
-            <p>每秒自動產出 ($GPS$): <span id="gps-display">0</span></p>
+            <p>TOTAL GWEI: <span id="gwei-display">0</span></p>
+            <p>GWEI PER CLICK: <span id="gpc-display">1</span></p>
+            <p>GWEI PER SECOND: <span id="gps-display">0</span></p>
         </div>
 
         <button id="click-button" onclick="clickGwei()">
-            點擊挖礦 (區塊)
+            EXECUTE_MINE
         </button>
 
         <div id="upgrade-buttons-container">
-            <button id="upgrade-button" onclick="upgradeClick()">
-                升級 $GPC$ (成本: <span id="upgrade-cost-display">10</span> $Gwei$)
+            <button id="upgrade-button" class="upgrade-btn" onclick="upgradeClick()">
+                UPGRADE_GPC (COST: <span id="upgrade-cost-display">10</span> GWEI)
             </button>
             
-            <button id="gps-upgrade-button" onclick="upgradeGPS()">
-                升級礦機 ($GPS$ 成本: <span id="gps-upgrade-cost-display">50</span> $Gwei$)
+            <button id="gps-upgrade-button" class="upgrade-btn" onclick="upgradeGPS()">
+                UPGRADE_MINER (COST: <span id="gps-upgrade-cost-display">50</span> GWEI)
             </button>
         </div>
     </div>
@@ -121,7 +177,6 @@
         const gweiDisplay = document.getElementById('gwei-display');
         const gpcDisplay = document.getElementById('gpc-display');
         const gpsDisplay = document.getElementById('gps-display');
-        // 注意：HTML 中 GPC 和 GPS 的成本 ID 是不同的，這裡對應的是正確 ID
         const gpcUpgradeCostDisplay = document.getElementById('upgrade-cost-display'); 
         const gpsUpgradeCostDisplay = document.getElementById('gps-upgrade-cost-display');
 
@@ -148,7 +203,7 @@
                 gpcUpgradeCost = Math.floor(gpcUpgradeCost * 1.5);
                 updateDisplay();
             } else {
-                alert('Gwei 不足！');
+                alert('INSUFFICIENT GWEI!'); // 提示也改為英文
             }
         }
         
@@ -160,7 +215,7 @@
                 gpsUpgradeCost = Math.floor(gpsUpgradeCost * 2);
                 updateDisplay();
             } else {
-                alert('Gwei 不足！');
+                alert('INSUFFICIENT GWEI!'); // 提示也改為英文
             }
         }
 
@@ -187,7 +242,6 @@
             const savedData = localStorage.getItem('gweiClickerSave');
             if (savedData) {
                 const gameData = JSON.parse(savedData);
-                // 使用 parseFloat 確保載入 Gwei 時保持小數點精度
                 gwei = parseFloat(gameData.gwei) || 0; 
                 gpc = gameData.gpc || 1;
                 gps = gameData.gps || 0;
