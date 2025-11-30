@@ -7,7 +7,7 @@
     <style>
         /* 基礎樣式與霓虹背景 */
         body {
-            font-family: 'Consolas', 'Courier New', monospace; /* 科技感字體 */
+            font-family: 'Consolas', 'Courier New', monospace;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -15,90 +15,76 @@
             min-height: 100vh;
             margin: 0;
             text-align: center;
-            overflow: hidden; /* 防止背景圖滾動 */
-            background-color: #000; /* 預設黑色背景 */
+            overflow: hidden;
+            background-color: #000;
         }
 
-        /* 【新增】全屏背景圖層 */
+        /* 全屏背景圖層 */
         #full-background {
-            position: fixed; /* 固定位置 */
+            position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url('images/cyberpunk_bg.jpg'); /* 替換為您的圖片路徑 */
-            background-size: cover; /* 覆蓋整個區域 */
-            background-position: center; /* 圖片居中 */
-            background-repeat: no-repeat; /* 不重複 */
-            opacity: 0.8; /* 稍微降低透明度，讓前景元素更突出 */
-            z-index: -1; /* 確保在所有內容之後 */
-            filter: blur(2px) brightness(0.7); /* 輕微模糊和變暗，讓前景文字更易讀 */
+            background-image: url('images/cyberpunk_bg.jpg'); /* 檢查這裡的檔名！ */
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            opacity: 0.8;
+            z-index: -1;
+            filter: blur(2px) brightness(0.7);
         }
 
+        /* 【修正】遊戲容器樣式：確保靠左對齊 */
         #game-container {
-            /* 移除邊框和陰影，讓它更融入背景圖 */
             padding: 40px; 
             border-radius: 12px;
-            background-color: rgba(26, 26, 26, 0.7); /* 半透明的深色背景，讓背景圖透出 */
-            position: relative; /* 確保內容在背景圖之上 */
-            z-index: 1; /* 讓內容顯示在背景之上 */
-            min-width: 400px; /* 確保容器有一定寬度 */
-            backdrop-filter: blur(5px); /* 對容器後面的背景做模糊處理，增加層次感 (現代瀏覽器支持) */
-            border: 1px solid rgba(0, 255, 106, 0.3); /* 細微的邊框 *
-            /* 移除邊框和陰影，讓它更融入背景圖 */
-    padding: 40px; 
-    border-radius: 12px;
-    background-color: rgba(26, 26, 26, 0.7);
-    position: relative; 
-    z-index: 1; 
-    min-width: 400px;
-    backdrop-filter: blur(5px);
-    border: 1px solid rgba(0, 255, 106, 0.3);
-
-    /* 【新增】讓容器內的文字和元素靠左對齊 */
-    text-align: left;
-            /
+            background-color: rgba(26, 26, 26, 0.7);
+            position: relative;
+            z-index: 1;
+            min-width: 400px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(0, 255, 106, 0.3);
+            
+            /* 【關鍵修正】讓容器內的文字和元素靠左對齊 */
+            text-align: left; 
         }
         
         h1 {
-            text-shadow: 0 0 10px #00ff6a; /* 標題霓虹效果更強 */
+            text-shadow: 0 0 10px #00ff6a;
             margin-bottom: 25px;
-            color: #00ff6a; /* 標題顏色 */
-            font-size: 2.5em; /* 調整標題大小 */
-            letter-spacing: 2px; /* 字體間距 */
+            color: #00ff6a;
+            font-size: 2.5em;
+            letter-spacing: 2px;
         }
 
         .stats p {
-            font-size: 1.4em; /* 調整文字大小 */
+            font-size: 1.4em;
             margin: 10px 0;
-            color: #00ff6a; /* 保持綠色 */
+            color: #00ff6a;
         }
         .stats span {
-            text-shadow: 0 0 8px rgba(0, 255, 106, 0.7); /* 數字光暈 */
+            text-shadow: 0 0 8px rgba(0, 255, 106, 0.7);
         }
         
-        /* 核心點擊按鈕 - 參考圖片中心樣式 */
+        /* 核心點擊按鈕 - 修正置中 */
         #click-button {
             padding: 25px 50px;
             font-size: 28px;
             font-weight: bold;
             cursor: pointer;
-            background-color: rgba(60, 0, 100, 0.7); /* 深紫半透明 */
-            color: #e0e0e0; /* 亮色文字 */
-            border: 3px solid #ff00ff; /* 紫色邊框 */
+            background-color: rgba(60, 0, 100, 0.7);
+            color: #e0e0e0;
+            border: 3px solid #ff00ff;
             border-radius: 8px;
-            margin-top: 40px; /* 增加間距 */
-            box-shadow: 0 0 20px rgba(255, 0, 255, 0.7); /* 強烈紫紅色光暈 */
+            
+            /* 【關鍵修正】置中設定 */
+            display: block; 
+            margin: 40px auto 0 auto; /* 設置上邊距40px，左右自動置中 */
+            
+            box-shadow: 0 0 20px rgba(255, 0, 255, 0.7);
             transition: all 0.2s ease-in-out;
             text-shadow: 0 0 8px #ff00ff;
-
-            /* ... 保持原有樣式 ... */
-    margin-top: 40px; 
-    
-    /* 【新增】將按鈕從左邊緣獨立出來並置中 */
-    display: block; /* 讓按鈕佔據一整行 */
-    margin-left: auto;
-    margin-right: auto;
         }
         #click-button:hover {
             background-color: rgba(80, 0, 120, 0.8);
@@ -111,16 +97,15 @@
             transform: scale(1.0);
         }
         
-
-
-        /* 升級按鈕容器 (將對齊方式改為左側) */
-    #upgrade-buttons-container {
-    display: flex;
-    gap: 15px; 
-    margin-top: 35px;
-    /* 【關鍵修改】將內容對齊到容器的起始位置（左側） */
-    justify-content: flex-start; 
-    }
+        /* 升級按鈕容器 (靠左對齊設定) */
+        #upgrade-buttons-container {
+            display: flex;
+            gap: 15px; 
+            margin-top: 35px;
+            
+            /* 【關鍵修正】確保容器內的按鈕靠左對齊 */
+            justify-content: flex-start; 
+        }
 
         /* 通用升級按鈕基底樣式 */
         .upgrade-btn {
@@ -137,7 +122,7 @@
 
         /* GPC 升級按鈕 (科技藍) */
         #upgrade-button {
-            background-color: rgba(0, 123, 255, 0.6); /* 半透明藍 */
+            background-color: rgba(0, 123, 255, 0.6);
             box-shadow: 0 0 15px rgba(0, 123, 255, 0.7);
             border: 1px solid rgba(0, 123, 255, 0.9);
         }
@@ -149,8 +134,8 @@
         
         /* GPS 升級按鈕 (警告黃/橙) */
         #gps-upgrade-button {
-            background-color: rgba(255, 193, 7, 0.6); /* 半透明黃 */
-            color: #1a1a1a; 
+            background-color: rgba(255, 193, 7, 0.6);
+            color: #1a1a1a;
             box-shadow: 0 0 15px rgba(255, 193, 7, 0.7);
             border: 1px solid rgba(255, 193, 7, 0.9);
         }
@@ -192,8 +177,8 @@
     <script>
         // 遊戲變數
         let gwei = 0;
-        let gpc = 1;      // Gwei Per Click
-        let gps = 0;      // Gwei Per Second
+        let gpc = 1;
+        let gps = 0;
         let gpcUpgradeCost = 10;
         let gpsUpgradeCost = 50; 
         
@@ -227,7 +212,7 @@
                 gpcUpgradeCost = Math.floor(gpcUpgradeCost * 1.5);
                 updateDisplay();
             } else {
-                alert('INSUFFICIENT GWEI!'); // 提示也改為英文
+                alert('INSUFFICIENT GWEI!');
             }
         }
         
@@ -239,13 +224,13 @@
                 gpsUpgradeCost = Math.floor(gpsUpgradeCost * 2);
                 updateDisplay();
             } else {
-                alert('INSUFFICIENT GWEI!'); // 提示也改為英文
+                alert('INSUFFICIENT GWEI!');
             }
         }
 
         // 定時自動產出功能
         function autoMine() {
-            gwei += gps / 10; // 每 100 毫秒 (1/10 秒) 增加 1/10 的 GPS 總量
+            gwei += gps / 10;
             updateDisplay();
         }
         
@@ -283,5 +268,3 @@
     </script>
 </body>
 </html>
-
-
