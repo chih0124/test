@@ -44,7 +44,20 @@
             z-index: 1; /* 讓內容顯示在背景之上 */
             min-width: 400px; /* 確保容器有一定寬度 */
             backdrop-filter: blur(5px); /* 對容器後面的背景做模糊處理，增加層次感 (現代瀏覽器支持) */
-            border: 1px solid rgba(0, 255, 106, 0.3); /* 細微的邊框 */
+            border: 1px solid rgba(0, 255, 106, 0.3); /* 細微的邊框 *
+            /* 移除邊框和陰影，讓它更融入背景圖 */
+    padding: 40px; 
+    border-radius: 12px;
+    background-color: rgba(26, 26, 26, 0.7);
+    position: relative; 
+    z-index: 1; 
+    min-width: 400px;
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(0, 255, 106, 0.3);
+
+    /* 【新增】讓容器內的文字和元素靠左對齊 */
+    text-align: left;
+            /
         }
         
         h1 {
@@ -78,6 +91,14 @@
             box-shadow: 0 0 20px rgba(255, 0, 255, 0.7); /* 強烈紫紅色光暈 */
             transition: all 0.2s ease-in-out;
             text-shadow: 0 0 8px #ff00ff;
+
+            /* ... 保持原有樣式 ... */
+    margin-top: 40px; 
+    
+    /* 【新增】將按鈕從左邊緣獨立出來並置中 */
+    display: block; /* 讓按鈕佔據一整行 */
+    margin-left: auto;
+    margin-right: auto;
         }
         #click-button:hover {
             background-color: rgba(80, 0, 120, 0.8);
@@ -262,4 +283,5 @@
     </script>
 </body>
 </html>
+
 
